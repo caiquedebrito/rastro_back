@@ -5,8 +5,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  app.setGlobalPrefix('api/rastro');
-  
+  app.setGlobalPrefix('api/rastro/');
+
   const config = new DocumentBuilder()
   .setTitle('Rastro API - Documentação')
   .setDescription('Documentação da API do sistema Rastro')
