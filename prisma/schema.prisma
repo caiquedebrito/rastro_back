@@ -22,6 +22,8 @@ model User {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt 
 
+  loans       Loan[]
+
   @@map("users") 
 }
 
@@ -38,10 +40,13 @@ model Resource {
   totalQuantity   Int 
   availableQuantity Int  
   reusable        Boolean 
+  status          ResourceStatus @default(AVAILABLE)
   categoryId      String   @db.ObjectId
   category        Category @relation(fields: [categoryId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  loans            Loan[]
 
   @@map("resources") 
 }
@@ -54,4 +59,39 @@ model Category {
   resources       Resource[] 
 
   @@map("categories") 
+}
+
+model Loan {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String       @db.ObjectId
+  user            User         @relation(fields: [userId], references: [id])
+  resourceId      String       @db.ObjectId
+  resource        Resource     @relation(fields: [resourceId], references: [id])
+  expectedReturn  DateTime
+  returnedAt      DateTime?
+  status          LoanStatus  @default(ACTIVE)
+  returnCondition ReturnCondition?
+  returnNotes     String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("loans")
+}
+
+enum  ResourceStatus {
+  IN_USE
+  AVAILABLE
+  MAINTENANCE
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  LATE
+}
+
+enum ReturnCondition {
+  GOOD
+  REGULAR
+  DAMAGED
 }
